@@ -78,6 +78,11 @@ class FtpConnectionOptions
      */
     private $recurseManually;
 
+    /**
+     * @var bool
+     */
+    private $noListOptions;
+
     public function __construct(
         string $host,
         string $root,
@@ -92,7 +97,8 @@ class FtpConnectionOptions
         ?string $systemType = null,
         ?bool $ignorePassiveAddress = null,
         bool $enableTimestampsOnUnixListings = false,
-        bool $recurseManually = false
+        bool $recurseManually = false,
+        bool $noListOptions = false
     ) {
         $this->host = $host;
         $this->root = $root;
@@ -108,6 +114,7 @@ class FtpConnectionOptions
         $this->ignorePassiveAddress = $ignorePassiveAddress;
         $this->enableTimestampsOnUnixListings = $enableTimestampsOnUnixListings;
         $this->recurseManually = $recurseManually;
+        $this->noListOptions = $noListOptions;
     }
 
     public function host(): string
@@ -180,6 +187,11 @@ class FtpConnectionOptions
         return $this->recurseManually;
     }
 
+    public function noListOptions(): bool
+    {
+        return $this->noListOptions;
+    }
+
     public static function fromArray(array $options): FtpConnectionOptions
     {
         return new FtpConnectionOptions(
@@ -196,7 +208,8 @@ class FtpConnectionOptions
             $options['systemType'] ?? null,
             $options['ignorePassiveAddress'] ?? null,
             $options['timestampsOnUnixListingsEnabled'] ?? false,
-            $options['recurseManually'] ?? true
+            $options['recurseManually'] ?? true,
+            $options['noListOptions'] ?? false
         );
     }
 }
