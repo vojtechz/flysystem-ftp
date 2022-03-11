@@ -353,7 +353,7 @@ class FtpAdapter implements FilesystemAdapter
         return new FileAttributes($path, $fileSize);
     }
 
-    public function listContents(string $path, bool $deep): iterable
+    public function listContents(string $path, bool $deep, bool $useListOptions = true): iterable
     {
         $path = ltrim($path, '/');
         $path = $path === '' ? $path : trim($path, '/') . '/';
@@ -363,7 +363,7 @@ class FtpAdapter implements FilesystemAdapter
         } else {
             $location = $this->prefixer()->prefixPath($path);
             $options = $deep ? '-alnR' : '-aln';
-            $listing = $this->ftpRawlist($options, $location);
+            $listing = $this->ftpRawlist($options, $location, $useListOptions);
             yield from $this->normalizeListing($listing, $path);
         }
     }
@@ -530,7 +530,7 @@ class FtpAdapter implements FilesystemAdapter
         }
     }
 
-    private function ftpRawlist(string $options, string $path): array
+    private function ftpRawlist(string $options, string $path, bool $useListOptions = true): array
     {
         $path = rtrim($path, '/') . '/';
         $connection = $this->connection();
@@ -538,6 +538,10 @@ class FtpAdapter implements FilesystemAdapter
         if ($this->isPureFtpdServer()) {
             $path = str_replace(' ', '\ ', $path);
             $path = $this->escapePath($path);
+        }
+
+        if (!$useListOptions) {
+            return ftp_rawlist($connection, $path, stripos($options, 'R') !== false) ?: [];
         }
 
         return ftp_rawlist($connection, $options . ' ' . $path, stripos($options, 'R') !== false) ?: [];
