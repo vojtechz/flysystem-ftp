@@ -363,7 +363,7 @@ class FtpAdapter implements FilesystemAdapter
         } else {
             $location = $this->prefixer()->prefixPath($path);
             $options = $deep ? '-alnR' : '-aln';
-            $listing = $this->ftpRawlist($options, $location, $this->connectionOptions->noListOptions());
+            $listing = $this->ftpRawlist($options, $location, $this->connectionOptions->useListOptions());
             yield from $this->normalizeListing($listing, $path);
         }
     }
